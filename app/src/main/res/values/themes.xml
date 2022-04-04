@@ -15,7 +15,7 @@
     </style>
 
     <!-- Get rid of the default action bar (set in the manifest) -->
-    <style name="CustomNoActionBarTheme" parent="@style/Theme.AppCompat.Light.NoActionBar">
+    <style name="CustomNoActionBarTheme" parent="@style/Theme.MaterialComponents.Light.NoActionBar">
         <item name="android:statusBarColor"> @color/colorPrimaryDark</item>
     </style>
 
