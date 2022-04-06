@@ -1,5 +1,6 @@
 package com.example.happyplaces
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
 import android.content.ActivityNotFoundException
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.example.happyplaces.databinding.ActivityAddHappyPlaceBinding
@@ -17,6 +19,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import java.io.IOException
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -138,6 +141,32 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
         ///// Set the selected date in the EditText
         binding?.etDate?.setText(sdf.format(cal.time).toString())
+    }
+
+    public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == Activity.RESULT_OK) {
+            if (requestCode == GALLERY) {
+                if (data != null) {
+
+                    ///// Date we got
+                    val contentURI = data.data
+
+                    try {
+                        ///// Get the image from the MediaStore based on the URI
+                        val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
+
+                        /////// Set the selected image from GALLERY to imageView.
+                        binding?.ivPlaceImage!!.setImageBitmap(selectedImageBitmap)
+
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Toast.makeText(this@AddHappyPlaceActivity, "Failed!", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            }
+        }
     }
 
     ///// Ask for permissions for choosing photos form gallery
