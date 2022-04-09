@@ -1,8 +1,11 @@
 package com.example.happyplaces.database
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
+import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
+import android.database.sqlite.SQLiteException
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.happyplaces.models.HappyPlaceModel
 
@@ -44,6 +47,7 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         onCreate(db)
     }
 
+    ///// Add entries to the database function
     fun addHappyPlace(happyPlace: HappyPlaceModel): Long {
 
         ///// Write someThing to the database
@@ -64,5 +68,51 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
 
         db.close() // Closing database connection
         return result
+    }
+
+    ///// Retrieve the date or get the data from the database
+    @SuppressLint("Range")
+    fun getHappyPlacesList(): ArrayList<HappyPlaceModel> {
+
+        val happyPlaceList = ArrayList<HappyPlaceModel>()
+
+        ///// Query to get all the entries in the TABLE_HAPPY_PLACE table in the database
+        val selectQuery = "SELECT  * FROM $TABLE_HAPPY_PLACE"
+
+        ///// The datebase
+        val db = this.readableDatabase
+
+        try {
+
+            ///// Cursor to go throw every single entry
+            val cursor: Cursor = db.rawQuery(selectQuery, null)
+
+            if (cursor.moveToFirst()) {
+                do {
+                    val place = HappyPlaceModel(
+                        cursor.getInt(cursor.getColumnIndex(KEY_ID)),
+                        cursor.getString(cursor.getColumnIndex(KEY_TITLE)),
+                        cursor.getString(cursor.getColumnIndex(KEY_IMAGE)),
+                        cursor.getString(cursor.getColumnIndex(KEY_DESCRIPTION)),
+                        cursor.getString(cursor.getColumnIndex(KEY_DATE)),
+                        cursor.getString(cursor.getColumnIndex(KEY_LOCATION)),
+                        cursor.getDouble(cursor.getColumnIndex(KEY_LATITUDE)),
+                        cursor.getDouble(cursor.getColumnIndex(KEY_LONGITUDE))
+                    )
+                    happyPlaceList.add(place)
+
+                } while (cursor.moveToNext())
+            }
+            cursor.close()
+        }
+        catch (e: SQLiteException) {
+            db.execSQL(selectQuery)
+
+            ///// Return an empty ArrayList if something went wrong
+            return ArrayList()
+        }
+
+        ///// Return the ArrayList of the entries when everything is alright
+        return happyPlaceList
     }
 }
