@@ -1,4 +1,4 @@
-package com.example.happyplaces
+package com.example.happyplaces.activities
 
 import android.app.Activity
 import android.app.AlertDialog
@@ -16,7 +16,10 @@ import android.provider.Settings
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import com.example.happyplaces.R
+import com.example.happyplaces.database.DatabaseHandler
 import com.example.happyplaces.databinding.ActivityAddHappyPlaceBinding
+import com.example.happyplaces.models.HappyPlaceModel
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -40,6 +43,15 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
     ///// On selecting date listener
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+
+    ///// Image path for easy reuse
+    private var saveImageToInternalStorage: Uri? = null
+
+    ///// A variable which will hold the latitude value
+    private var mLatitude: Double = 0.0
+
+    ///// A variable which will hold the longitude value
+    private var mLongitude: Double = 0.0
     //endregion
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -78,11 +90,16 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
         //endregion
 
+        ///// Automatic set current date onCreate
+        updateDateInView()
+
         ///// this point to AddHappyPlaceActivity as it implement OnClickListener functionality
         binding?.etDate?.setOnClickListener(this)
 
         ///// this point to AddHappyPlaceActivity as it implement OnClickListener functionality
         binding?.tvAddImage?.setOnClickListener(this)
+
+        binding?.btnSave?.setOnClickListener(this)
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -133,6 +150,58 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 pictureDialog.show()
             }
 
+            R.id.btn_save -> {
+
+                ///// Check first if the fields is not empty
+                when {
+
+                    binding?.etTitle?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this, "Please enter title", Toast.LENGTH_SHORT).show()
+                    }
+
+                    binding?.etDescription?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this, "Please enter a description", Toast.LENGTH_SHORT).show()
+                    }
+
+                    binding?.etLocation?.text.isNullOrEmpty() -> {
+                        Toast.makeText(this, "Please select location", Toast.LENGTH_SHORT).show()
+                    }
+
+                    saveImageToInternalStorage == null -> {
+                        Toast.makeText(this, "Please add image", Toast.LENGTH_SHORT).show()
+                    }
+                    else -> {
+                        ///// Execute save to storage code
+                        ///// HappyPlaceModel object with it's properties
+                        val happyPlaceModel = HappyPlaceModel(
+                            0,
+                            binding?.etTitle?.text.toString(),
+                            saveImageToInternalStorage.toString(),
+                            binding?.etDescription?.text.toString(),
+                            binding?.etDate?.text.toString(),
+                            binding?.etLocation?.text.toString(),
+                            mLatitude,
+                            mLongitude
+                        )
+                        ///// DatabaseHandler object for storing data
+                        val dbHandler = DatabaseHandler(this)
+
+                        ///// Result
+                        val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+
+                        ///// If there's no errors
+                        if (addHappyPlace > 0) {
+                            Toast.makeText(
+                                this,
+                                "The happy place details are inserted successfully", Toast.LENGTH_SHORT
+                            ).show()
+                            ///// Finish the addHappyPlaceActivity and return to the main activity
+                            finish()
+                        }
+                    }
+                }
+            }
+
         }
     }
 
@@ -162,7 +231,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         val selectedImageBitmap = MediaStore.Images.Media.getBitmap(this.contentResolver, contentURI)
 
                         ///// Call saving image to the storage fun & passing the image of type Bitmap
-                        val saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
+                        saveImageToInternalStorage = saveImageToInternalStorage(selectedImageBitmap)
                         Log.e("saved image: ", "path :: $saveImageToInternalStorage")
 
                         /////// Set the selected image from GALLERY to the imageView
@@ -174,13 +243,13 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                             .show()
                     }
                 }
-            }else if (requestCode == CAMERA) {
+            } else if (requestCode == CAMERA) {
 
                 ///// Date we got ( incase from the camera ) and cast or convert it to Bitmap as it of type Intent
                 val thumbnail: Bitmap = data!!.extras!!.get("data") as Bitmap
 
                 ///// Call saving image to the storage fun & passing the image of type Bitmap
-                val saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
+                saveImageToInternalStorage = saveImageToInternalStorage(thumbnail)
                 Log.e("saved image: ", "path :: $saveImageToInternalStorage")
 
                 /////// Set the selected image from CAMERA to the imageView
@@ -233,29 +302,29 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 ///// On permissions granted
                 override fun onPermissionsChecked(report: MultiplePermissionsReport) {
 
-                ///// When permission is granted execute opening the gallery code
-                if (report.areAllPermissionsGranted()) {
-                    /*
-                    Toast.makeText(
-                        this@AddHappyPlaceActivity,
-                        "Storage Read/Write permissions are granted. Now you can select image form the gallery",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                    */
-                    ///// Intent for opening the gallery
-                    val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
-                    ///// Start the intent
-                    startActivityForResult(galleryIntent, GALLERY)
+                    ///// When permission is granted execute opening the gallery code
+                    if (report.areAllPermissionsGranted()) {
+                        /*
+                        Toast.makeText(
+                            this@AddHappyPlaceActivity,
+                            "Storage Read/Write permissions are granted. Now you can select image form the gallery",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        */
+                        ///// Intent for opening the gallery
+                        val galleryIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        ///// Start the intent
+                        startActivityForResult(galleryIntent, GALLERY)
+                    }
                 }
-            }
 
-            override fun onPermissionRationaleShouldBeShown(
-                permissions: MutableList<PermissionRequest>, token: PermissionToken
-            ) {
+                override fun onPermissionRationaleShouldBeShown(
+                    permissions: MutableList<PermissionRequest>, token: PermissionToken
+                ) {
 
-                showRationalDialogForPermissions()
-            }
-        }).onSameThread().check()
+                    showRationalDialogForPermissions()
+                }
+            }).onSameThread().check()
     }
 
     ///// Show dialog when permissions are not granted function
@@ -264,7 +333,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// Dialog
         AlertDialog.Builder(this).setMessage("You turned off permission for this feature")
 
-                ///// Option #1
+            ///// Option #1
             .setPositiveButton("GO TO SETTINGS") { _, _ ->
                 try {
 
@@ -318,8 +387,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
             // Close stream
             stream.close()
-        }
-        catch (e: IOException) {
+        } catch (e: IOException) {
             e.printStackTrace()
         }
 
@@ -328,7 +396,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     }
 
     ///// For constants as static for all classes
-    companion object{
+    companion object {
         private const val GALLERY = 1
         private const val CAMERA = 2
         private const val IMAGE_DIRECTORY = "HappyPlacesImages"
