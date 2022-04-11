@@ -1,5 +1,6 @@
 package com.example.happyplaces.activities
 
+import android.app.Activity
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -21,7 +22,9 @@ class MainActivity : AppCompatActivity() {
 
         binding?.fabAddHappyPlace?.setOnClickListener {
             val intent = Intent(this, AddHappyPlaceActivity::class.java)
-            startActivity(intent)
+
+            ///// StartActivityForResult in order to make the RV responsible to the database new entries
+            startActivityForResult(intent, ADD_PLACE_ACTIVITY_REQUEST_CODE)
         }
 
         getHappyPlacesListFromLocalDB()
@@ -53,7 +56,7 @@ class MainActivity : AppCompatActivity() {
             setupHappyPlacesRecyclerView(getHappyPlacesList)
 
 
-        }else{
+        } else {
             ///// Hide the Views
             binding?.rvHappyPlacesList?.visibility = View.GONE
             binding?.tvNoRecordsAvailable?.visibility = View.VISIBLE
@@ -61,4 +64,23 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // Call Back method  to get the Message form other Activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // check if the request code is same as what is passed  here it is 'ADD_PLACE_ACTIVITY_REQUEST_CODE'
+        if (requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+
+                ///// Refresh the RV here
+                getHappyPlacesListFromLocalDB()
+            }else{
+                Log.e("Activity", "Cancelled or Back Pressed")
+            }
+        }
+    }
+    companion object {
+        private const val ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
+        internal const val EXTRA_PLACE_DETAILS = "extra_place_details"
+    }
 }

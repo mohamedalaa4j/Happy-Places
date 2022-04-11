@@ -191,10 +191,14 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
                         ///// If there's no errors
                         if (addHappyPlace > 0) {
+
+                            setResult(Activity.RESULT_OK)
+                            /*
                             Toast.makeText(
                                 this,
                                 "The happy place details are inserted successfully", Toast.LENGTH_SHORT
                             ).show()
+                            */
                             ///// Finish the addHappyPlaceActivity and return to the main activity
                             finish()
                         }

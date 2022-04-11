@@ -8,6 +8,7 @@
         <entry key="app/src/main/res/drawable/shape_button_rounded.xml" value="0.177" />
         <entry key="app/src/main/res/drawable/shape_image_view_border.xml" value="0.177" />
         <entry key="app/src/main/res/layout/activity_add_happy_place.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/activity_happy_place_detail.xml" value="0.2390625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/item_happy_place.xml" value="0.33" />
       </map>
