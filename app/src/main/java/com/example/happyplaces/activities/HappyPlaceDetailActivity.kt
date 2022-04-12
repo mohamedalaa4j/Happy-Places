@@ -23,7 +23,7 @@ class HappyPlaceDetailActivity : AppCompatActivity() {
 
             ///// getSerializableExtra instead of getExtra as the information is a serializable object
             ///// Casting as HappyPlaceModel cause it won't be in the HappyPlaceModel format
-            happyPlaceDetailModel = intent.getSerializableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel
+            happyPlaceDetailModel = intent.getParcelableExtra(MainActivity.EXTRA_PLACE_DETAILS) as HappyPlaceModel?
         }
 
         if (happyPlaceDetailModel != null) {
