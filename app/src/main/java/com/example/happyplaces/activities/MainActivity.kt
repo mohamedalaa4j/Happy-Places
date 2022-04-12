@@ -38,6 +38,22 @@ class MainActivity : AppCompatActivity() {
 
         val placesAdapter = HappyPlacesAdapter(this, happyPlacesList)
         binding?.rvHappyPlacesList?.adapter = placesAdapter
+
+        ///// Call setOnClickListener fun from the adapter
+        ///// Pass OnClickListener interface to it as an object because it need a parameter of type OnClickListener
+        placesAdapter.setOnClickListener(object : HappyPlacesAdapter.OnClickListener{
+
+            ///// In the interface OnClickListener we can override the onClick fun
+            override fun onClick(position: Int, model: HappyPlaceModel) {
+
+                ///// Code to execute on click event
+                val intent = Intent(this@MainActivity, HappyPlaceDetailActivity::class.java)
+
+                ///// Pass information to the activity with putExtra
+                intent.putExtra(EXTRA_PLACE_DETAILS, model)
+                startActivity(intent)
+            }
+        })
     }
 
     private fun getHappyPlacesListFromLocalDB() {
