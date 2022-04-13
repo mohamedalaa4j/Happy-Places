@@ -13,6 +13,7 @@ import com.example.happyplaces.adapters.HappyPlacesAdapter
 import com.example.happyplaces.database.DatabaseHandler
 import com.example.happyplaces.databinding.ActivityMainBinding
 import com.example.happyplaces.models.HappyPlaceModel
+import com.happyplaces.utils.SwipeToDeleteCallback
 import pl.kitek.rvswipetodelete.SwipeToEditCallback
 
 class MainActivity : AppCompatActivity() {
@@ -59,6 +60,8 @@ class MainActivity : AppCompatActivity() {
             }
         })
 
+        //region Swipe To Edit
+
         ///// Object of SwipeToEditCallback
         val editSwipeHandler = object : SwipeToEditCallback(this) {
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
@@ -74,8 +77,32 @@ class MainActivity : AppCompatActivity() {
 
         ///// Attach ItemTouchHelper to the RV
         editItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
+        //endregion
+        //region Swipe To Delete
+
+        ///// Object of SwipeToEditCallback
+        val deleteSwipeHandler = object : SwipeToDeleteCallback(this) {
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = binding?.rvHappyPlacesList?.adapter as HappyPlacesAdapter
+
+                ///// Notify the adapter which calls an Intent
+                adapter.removeAt(viewHolder.adapterPosition)
+
+                ///// Reload the entries from the database again after deleting
+                getHappyPlacesListFromLocalDB()
+            }
+        }
+
+        ///// Assign editSwipeHandler via ItemTouchHelper object
+        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+
+        ///// Attach ItemTouchHelper to the RV
+        deleteItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
+        //endregion
+
     }
 
+    ///// Load the entries from the database & prepare the Views
     private fun getHappyPlacesListFromLocalDB() {
 
         val dbHandler = DatabaseHandler(this)
