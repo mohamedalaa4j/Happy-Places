@@ -70,6 +70,29 @@ class DatabaseHandler(context: Context) : SQLiteOpenHelper(context, DATABASE_NAM
         return result
     }
 
+    ///// Update entries to the database function and return Int cause updateHappyPlace returns Int
+    fun updateHappyPlace(happyPlace: HappyPlaceModel): Int {
+
+        ///// Write someThing to the database
+        val db = this.writableDatabase
+
+        val contentValues = ContentValues()
+        contentValues.put(KEY_TITLE, happyPlace.title) // HappyPlaceModelClass TITLE
+        contentValues.put(KEY_IMAGE, happyPlace.image) // HappyPlaceModelClass IMAGE
+        contentValues.put(KEY_DESCRIPTION, happyPlace.description) // HappyPlaceModelClass DESCRIPTION
+        contentValues.put(KEY_DATE, happyPlace.date) // HappyPlaceModelClass DATE
+        contentValues.put(KEY_LOCATION, happyPlace.location) // HappyPlaceModelClass LOCATION
+        contentValues.put(KEY_LATITUDE, happyPlace.latitude) // HappyPlaceModelClass LATITUDE
+        contentValues.put(KEY_LONGITUDE, happyPlace.longitude) // HappyPlaceModelClass LONGITUDE
+
+        // Inserting Row to the database
+        val success = db.update(TABLE_HAPPY_PLACE, contentValues, KEY_ID + "=" + happyPlace.id, null)
+        //2nd argument is String containing nullColumnHack
+
+        db.close() // Closing database connection
+        return success
+    }
+
     ///// Retrieve the date or get the data from the database
     @SuppressLint("Range")
     fun getHappyPlacesList(): ArrayList<HappyPlaceModel> {

@@ -5,6 +5,7 @@
       <map>
         <entry key="../../../../layout/custom_preview.xml" value="0.2359375" />
         <entry key="app/src/main/res/drawable/ic_action_add_24dp.xml" value="0.1275" />
+        <entry key="app/src/main/res/drawable/ic_edit_white_24dp.xml" value="0.148" />
         <entry key="app/src/main/res/drawable/shape_button_rounded.xml" value="0.177" />
         <entry key="app/src/main/res/drawable/shape_image_view_border.xml" value="0.177" />
         <entry key="app/src/main/res/layout/activity_add_happy_place.xml" value="0.25" />

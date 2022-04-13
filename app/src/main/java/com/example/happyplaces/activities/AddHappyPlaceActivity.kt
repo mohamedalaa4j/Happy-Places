@@ -52,6 +52,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
     ///// A variable which will hold the longitude value
     private var mLongitude: Double = 0.0
+
+    ///// For storing new entries changing due to RV swipe to edit
+    private var mHappyPlaceDetails: HappyPlaceModel? = null
     //endregion
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +73,34 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
         //endregion
+
+        //region Swipe to edit Intent (Receiving the info)
+
+        ///// When model info passed throw intent store them in mHappyPlaceDetails
+        if (intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
+            mHappyPlaceDetails = intent.getParcelableExtra(MainActivity.EXTRA_PLACE_DETAILS)
+        }
+
+        ///// When model info passed throw intent populate the views automatically
+        if (mHappyPlaceDetails != null){
+
+            supportActionBar?.title = "Edit Happy Place"
+
+            binding?.etTitle?.setText(mHappyPlaceDetails!!.title)
+            binding?.etDescription?.setText(mHappyPlaceDetails!!.description)
+            binding?.etDate?.setText(mHappyPlaceDetails!!.date)
+            binding?.etLocation?.setText(mHappyPlaceDetails!!.location)
+            mLatitude = mHappyPlaceDetails!!.latitude
+            mLongitude = mHappyPlaceDetails!!.longitude
+
+            saveImageToInternalStorage = Uri.parse(mHappyPlaceDetails!!.image)
+
+            binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
+
+            binding?.btnSave?.text = "UPDATE"
+        }
+        //endregion
+
 
         //region DatePickerDialog
 
@@ -92,6 +123,25 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
         ///// Automatic set current date onCreate
         updateDateInView()
+
+        ///// When model info passed throw intent populate the views automatically
+        if (mHappyPlaceDetails != null){
+
+            supportActionBar?.title = "Edit Happy Place"
+
+            binding?.etTitle?.setText(mHappyPlaceDetails!!.title)
+            binding?.etDescription?.setText(mHappyPlaceDetails!!.description)
+            binding?.etDate?.setText(mHappyPlaceDetails!!.date)
+            binding?.etLocation?.setText(mHappyPlaceDetails!!.location)
+            mLatitude = mHappyPlaceDetails!!.latitude
+            mLongitude = mHappyPlaceDetails!!.longitude
+
+            saveImageToInternalStorage = Uri.parse(mHappyPlaceDetails!!.image)
+
+            binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
+
+            binding?.btnSave?.text = "UPDATE"
+        }
 
         ///// this point to AddHappyPlaceActivity as it implement OnClickListener functionality
         binding?.etDate?.setOnClickListener(this)
@@ -174,7 +224,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         ///// Execute save to storage code
                         ///// HappyPlaceModel object with it's properties
                         val happyPlaceModel = HappyPlaceModel(
-                            0,
+                            if (mHappyPlaceDetails == null) 0 else mHappyPlaceDetails!!.id,
                             binding?.etTitle?.text.toString(),
                             saveImageToInternalStorage.toString(),
                             binding?.etDescription?.text.toString(),
@@ -186,22 +236,48 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         ///// DatabaseHandler object for storing data
                         val dbHandler = DatabaseHandler(this)
 
-                        ///// Result
-                        val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                        ///// Check to add or update the entry
+                        if (mHappyPlaceDetails == null){
 
-                        ///// If there's no errors
-                        if (addHappyPlace > 0) {
+                            //Add
+                            ///// Result
+                            val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
 
-                            setResult(Activity.RESULT_OK)
-                            /*
-                            Toast.makeText(
-                                this,
-                                "The happy place details are inserted successfully", Toast.LENGTH_SHORT
-                            ).show()
-                            */
-                            ///// Finish the addHappyPlaceActivity and return to the main activity
-                            finish()
+                            ///// If there's no errors (as addHappyPlace fun returns Long value)
+                            if (addHappyPlace > 0) {
+
+                                setResult(Activity.RESULT_OK)
+                                /*
+                                Toast.makeText(
+                                    this,
+                                    "The happy place details are inserted successfully", Toast.LENGTH_SHORT
+                                ).show()
+                                */
+                                ///// Finish the addHappyPlaceActivity and return to the main activity
+                                finish()
+                            }
+
+                        }else{
+
+                            //Update
+                            ///// Result
+                            val updateHappyPlace = dbHandler.updateHappyPlace(happyPlaceModel)
+
+                            ///// If there's no errors (as updateHappyPlace fun returns Int value)
+                            if (updateHappyPlace > 0) {
+
+                                setResult(Activity.RESULT_OK)
+                                /*
+                                Toast.makeText(
+                                    this,
+                                    "The happy place details are inserted successfully", Toast.LENGTH_SHORT
+                                ).show()
+                                */
+                                ///// Finish the addHappyPlaceActivity and return to the main activity
+                                finish()
+                            }
                         }
+
                     }
                 }
             }
