@@ -109,13 +109,13 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         //region DatePickerDialog
 
         ///// Listener to pick the user's choice
-        dateSetListener = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+        dateSetListener = DatePickerDialog.OnDateSetListener { _, year, monthOfYear, dayOfMonth ->
 
             ///// Set the Calender year to the user's choice
             cal.set(Calendar.YEAR, year)
 
             ///// Set the Calender month to the user's choice
-            cal.set(Calendar.MONTH, month)
+            cal.set(Calendar.MONTH, monthOfYear)
 
             ///// Set the Calender day to the user's choice
             cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
@@ -329,7 +329,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private fun updateDateInView() {
 
         ///// Format the date
-        val myFormat = "dd.mm.yyy"
+        val myFormat = "dd.MM.yyyy"
         val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
 
         ///// Set the selected date in the EditText
