@@ -75,6 +75,8 @@
                 android:id="@+id/btn_view_on_map"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                app:backgroundTint="@color/colorPrimary"
+                app:tint="@color/colorPrimary"
                 android:layout_gravity="center"
                 android:layout_marginStart="@dimen/detail_screen_btn_view_on_map_marginStartEnd"
                 android:layout_marginTop="@dimen/detail_screen_btn_view_on_map_marginTop"
