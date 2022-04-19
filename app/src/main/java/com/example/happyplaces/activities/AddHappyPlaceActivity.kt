@@ -20,6 +20,10 @@ import com.example.happyplaces.R
 import com.example.happyplaces.database.DatabaseHandler
 import com.example.happyplaces.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplaces.models.HappyPlaceModel
+import com.google.android.libraries.places.api.Places
+import com.google.android.libraries.places.api.model.Place
+import com.google.android.libraries.places.widget.Autocomplete
+import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -77,12 +81,12 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         //region Swipe to edit Intent (Receiving the info)
 
         ///// When model info passed throw intent store them in mHappyPlaceDetails
-        if (intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
+        if (intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)) {
             mHappyPlaceDetails = intent.getParcelableExtra(MainActivity.EXTRA_PLACE_DETAILS)
         }
 
         ///// When model info passed throw intent populate the views automatically
-        if (mHappyPlaceDetails != null){
+        if (mHappyPlaceDetails != null) {
 
             supportActionBar?.title = "Edit Happy Place"
 
@@ -125,7 +129,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         updateDateInView()
 
         ///// When model info passed throw intent populate the views automatically
-        if (mHappyPlaceDetails != null){
+        if (mHappyPlaceDetails != null) {
 
             supportActionBar?.title = "Edit Happy Place"
 
@@ -146,12 +150,31 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// this point to AddHappyPlaceActivity as it implement OnClickListener functionality
         binding?.etDate?.setOnClickListener(this)
 
-        ///// this point to AddHappyPlaceActivity as it implement OnClickListener functionality
         binding?.tvAddImage?.setOnClickListener(this)
 
         binding?.btnSave?.setOnClickListener(this)
+
+        binding?.etLocation?.setOnClickListener(this)
+
+
+        ///// Initialize the places sdk if it is not initialized earlier using the api key.
+        if (!Places.isInitialized()) {
+            Places.initialize(
+                this@AddHappyPlaceActivity, resources.getString(R.string.google_maps_api_key)
+            )
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    ///// For constants as static for all classes
+    companion object {
+        private const val GALLERY = 1
+        private const val CAMERA = 2
+        private const val IMAGE_DIRECTORY = "HappyPlacesImages"
+
+        ///// A constant variable for place picker
+        private const val PLACE_AUTOCOMPLETE_REQUEST_CODE = 3
+    }
 
     override fun onDestroy() {
         super.onDestroy()
@@ -237,7 +260,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         val dbHandler = DatabaseHandler(this)
 
                         ///// Check to add or update the entry
-                        if (mHappyPlaceDetails == null){
+                        if (mHappyPlaceDetails == null) {
 
                             //Add
                             ///// Result
@@ -257,7 +280,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                                 finish()
                             }
 
-                        }else{
+                        } else {
 
                             //Update
                             ///// Result
@@ -282,6 +305,23 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
 
+            R.id.et_location -> {
+                try {
+                    ///// These are the list of fields which we required is passed
+                    val fields = listOf(
+                        Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG,
+                        Place.Field.ADDRESS
+                    )
+                    ///// Start the autocomplete intent with a unique request code.
+                    val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields)
+                        .build(this@AddHappyPlaceActivity)
+
+                    startActivityForResult(intent, PLACE_AUTOCOMPLETE_REQUEST_CODE)
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                }
+            }
+
         }
     }
 
@@ -296,7 +336,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         binding?.etDate?.setText(sdf.format(cal.time).toString())
     }
 
-    ///// onResult for Intent opening ( the gallery or the camera )
+    ///// onResult for Intent opening depending on the code
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -334,6 +374,17 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
                 /////// Set the selected image from CAMERA to the imageView
                 binding?.ivPlaceImage!!.setImageBitmap(thumbnail)
+            }else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE){
+
+                ///// Passing the data we get with the intent
+                val place: Place = Autocomplete.getPlaceFromIntent(data!!)
+
+                ///// Display in the  location editText the current address
+                binding?.etLocation?.setText(place.address)
+
+                ///// Set mLatitude, mLongitude variables to the current
+                mLatitude = place.latLng!!.latitude
+                mLongitude = place.latLng!!.longitude
             }
         }
     }
@@ -475,10 +526,5 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         return Uri.parse(file.absolutePath)
     }
 
-    ///// For constants as static for all classes
-    companion object {
-        private const val GALLERY = 1
-        private const val CAMERA = 2
-        private const val IMAGE_DIRECTORY = "HappyPlacesImages"
-    }
+
 }
