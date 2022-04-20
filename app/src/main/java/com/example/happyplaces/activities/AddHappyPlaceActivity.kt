@@ -10,10 +10,12 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -23,6 +25,7 @@ import com.example.happyplaces.R
 import com.example.happyplaces.database.DatabaseHandler
 import com.example.happyplaces.databinding.ActivityAddHappyPlaceBinding
 import com.example.happyplaces.models.HappyPlaceModel
+import com.google.android.gms.location.*
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -62,9 +65,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
     ///// For storing new entries changing due to RV swipe to edit
     private var mHappyPlaceDetails: HappyPlaceModel? = null
+
+    ///// A fused location client variable which is further user to get the user's current location
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
     //endregion
 
-    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddHappyPlaceBinding.inflate(layoutInflater)
@@ -162,6 +167,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
         binding?.tvSelectCurrentLocation?.setOnClickListener(this)
 
+        ///// Initialize the Fused location variable
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
 
         ///// Initialize the places sdk if it is not initialized earlier using the api key.
         if (!Places.isInitialized()) {
@@ -185,6 +192,41 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
+    }
+
+    ///// Request the location
+    @SuppressLint("MissingPermission") // We asked for permission manually before calling the function
+    private fun requestNewLocationData() {
+
+        ///// LocationRequest object
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        ///// Properties
+        // How many every ms I want to run this
+        mLocationRequest.interval = 0
+        // update once
+        mLocationRequest.numUpdates = 1
+
+        ///// Assign settings to the Fused Location Client
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+    }
+
+    ///// CallBack variable for requestLocationUpdates
+    private val mLocationCallback = object : LocationCallback() {
+
+        override fun onLocationResult(locationResult: LocationResult) {
+
+            val mLastLocation: Location = locationResult.lastLocation
+
+            ///// Assigning the  Latitude & Longitude
+            mLatitude = mLastLocation.latitude
+            Log.e("Current Latitude", "$mLatitude")
+            mLongitude = mLastLocation.longitude
+            Log.e("Current Longitude", "$mLongitude")
+
+        }
     }
 
     override fun onClick(v: View) {
@@ -351,11 +393,17 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                             ///// On permission granted
                             override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                                 if (report!!.areAllPermissionsGranted()) {
+
+                                    ///// Call request location fun after permission granted
+                                    requestNewLocationData()
+                                    /*
                                     Toast.makeText(
                                         this@AddHappyPlaceActivity,
                                         "Location permission granted",
                                         Toast.LENGTH_SHORT
                                     ).show()
+
+                                     */
                                 }
                             }
 
