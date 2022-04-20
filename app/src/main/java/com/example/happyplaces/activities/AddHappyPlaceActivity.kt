@@ -1,5 +1,6 @@
 package com.example.happyplaces.activities
 
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -61,6 +62,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private var mHappyPlaceDetails: HappyPlaceModel? = null
     //endregion
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddHappyPlaceBinding.inflate(layoutInflater)
