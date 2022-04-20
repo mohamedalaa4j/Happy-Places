@@ -1,5 +1,6 @@
 package com.example.happyplaces.activities
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
@@ -9,6 +10,7 @@ import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
+import android.location.LocationManager
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -157,6 +159,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         binding?.btnSave?.setOnClickListener(this)
 
         binding?.etLocation?.setOnClickListener(this)
+
+        binding?.tvSelectCurrentLocation?.setOnClickListener(this)
 
 
         ///// Initialize the places sdk if it is not initialized earlier using the api key.
@@ -324,7 +328,58 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 }
             }
 
+            R.id.tv_select_current_location -> {
+                if (!isLocationEnabled()) {
+                    Toast.makeText(
+                        this, "Your location provider is turned off. Please turn it on.",
+                        Toast.LENGTH_SHORT
+                    ).show()
+
+                    ///// This will redirect you to settings of location provider
+                    val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+                    startActivity(intent)
+                } else {
+
+                    ///// Start Dexter for getting permissions
+                    Dexter.withActivity(this).withPermissions(
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission.ACCESS_COARSE_LOCATION
+                    )
+                        ///// Listener object for permitting & denial
+                        .withListener(object : MultiplePermissionsListener {
+
+                            ///// On permission granted
+                            override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                                if (report!!.areAllPermissionsGranted()) {
+                                    Toast.makeText(
+                                        this@AddHappyPlaceActivity,
+                                        "Location permission granted",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+
+                            ///// On permission denial
+                            override fun onPermissionRationaleShouldBeShown(
+                                permissions: MutableList<PermissionRequest>?,
+                                token: PermissionToken?
+                            ) {
+                                ///// Show the dialog created before
+                                showRationalDialogForPermissions()
+                            }
+                        }).onSameThread()
+                        .check()
+                }
+            }
+
         }
+    }
+
+    ///// Check if we have the permissions to get the location
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     ///// To put the selected date in the EditText function
@@ -376,7 +431,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
                 /////// Set the selected image from CAMERA to the imageView
                 binding?.ivPlaceImage!!.setImageBitmap(thumbnail)
-            }else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE){
+            } else if (requestCode == PLACE_AUTOCOMPLETE_REQUEST_CODE) {
 
                 ///// Passing the data we get with the intent
                 val place: Place = Autocomplete.getPlaceFromIntent(data!!)
