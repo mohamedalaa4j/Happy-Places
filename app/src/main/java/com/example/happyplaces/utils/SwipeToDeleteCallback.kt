@@ -1,4 +1,4 @@
-package com.happyplaces.utils
+package com.example.happyplaces.utils
 
 import android.content.Context
 import android.graphics.*

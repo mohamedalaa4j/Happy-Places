@@ -13,8 +13,8 @@ import com.example.happyplaces.adapters.HappyPlacesAdapter
 import com.example.happyplaces.database.DatabaseHandler
 import com.example.happyplaces.databinding.ActivityMainBinding
 import com.example.happyplaces.models.HappyPlaceModel
-import com.happyplaces.utils.SwipeToDeleteCallback
-import pl.kitek.rvswipetodelete.SwipeToEditCallback
+import com.example.happyplaces.utils.SwipeToDeleteCallback
+import com.example.happyplaces.utils.SwipeToEditCallback
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null

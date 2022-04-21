@@ -1,4 +1,4 @@
-package pl.kitek.rvswipetodelete
+package com.example.happyplaces.utils
 
 import android.content.Context
 import android.graphics.*
@@ -56,7 +56,7 @@ abstract class SwipeToEditCallback(context: Context) : ItemTouchHelper.SimpleCal
 
         // Draw the green edit background
         background.color = backgroundColor
-        background.setBounds(itemView.left + dX.toInt(), itemView.top, itemView.left, itemView.bottom)
+        background.setBounds(itemView.left, itemView.top, itemView.left + dX.toInt(), itemView.bottom)
         background.draw(c)
 
         // Calculate position of edit icon
