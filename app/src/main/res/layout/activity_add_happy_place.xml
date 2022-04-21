@@ -118,6 +118,55 @@
                     android:textSize="@dimen/edit_text_text_size" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_latitude"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/add_screen_til_marginTop"
+                android:layout_marginStart="@dimen/latLang_margin"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/til_longitude"
+                app:layout_constraintTop_toBottomOf="@+id/til_location">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_latitude"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/latitude"
+                    android:inputType="text"
+                    android:textColor="@color/primary_text_color"
+                    android:textColorHint="@color/secondary_text_color"
+                    android:textSize="@dimen/edit_text_text_size" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_longitude"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/add_screen_til_marginTop"
+                android:layout_marginStart="@dimen/latLang_margin"
+                app:layout_constraintStart_toEndOf="@id/til_latitude"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/til_location">
+
+                <androidx.appcompat.widget.AppCompatEditText
+                    android:id="@+id/et_longitude"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:focusable="true"
+                    android:focusableInTouchMode="true"
+                    android:hint="@string/longitude"
+                    android:inputType="text"
+                    android:textColor="@color/primary_text_color"
+                    android:textColorHint="@color/secondary_text_color"
+                    android:textSize="@dimen/edit_text_text_size" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
             <TextView
                 android:id="@+id/tv_select_current_location"
                 android:layout_width="match_parent"
@@ -129,10 +178,10 @@
                 android:padding="@dimen/add_place_select_current_location_padding"
                 android:text="@string/add_place_select_current_location_text"
                 android:textColor="@color/colorAccent"
-                android:textSize="@dimen/add_place_select_current_location_textsize"
+                android:textSize="@dimen/add_place_select_current_location_textSize"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/til_location" />
+                app:layout_constraintTop_toBottomOf="@+id/til_latitude" />
 
             <androidx.appcompat.widget.AppCompatImageView
                 android:id="@+id/iv_place_image"

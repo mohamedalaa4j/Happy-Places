@@ -4,6 +4,7 @@
     <dimen name="main_content_padding">16dp</dimen>
     <dimen name="edit_text_text_size">16sp</dimen>
     <dimen name="add_screen_til_marginTop">5dp</dimen>
+    <dimen name="latLang_margin">2.5dp</dimen>
     <dimen name="add_screen_place_image_size">200dp</dimen>
     <dimen name="add_screen_place_image_marginTop">15dp</dimen>
     <dimen name="add_screen_place_image_padding">2dp</dimen>
@@ -38,5 +39,5 @@
     <dimen name="detail_screen_btn_view_on_map_text_size">18sp</dimen>
     <dimen name="add_place_select_current_location_marginTop">5dp</dimen>
     <dimen name="add_place_select_current_location_padding">10dp</dimen>
-    <dimen name="add_place_select_current_location_textsize">16sp</dimen>
+    <dimen name="add_place_select_current_location_textSize">16sp</dimen>
 </resources>
