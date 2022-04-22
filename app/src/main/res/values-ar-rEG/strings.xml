@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="edit_text_hint_description">الوصف</string>
+    <string name="edit_text_hint_date">التاريخ</string>
+    <string name="text_add_image">أضف صورة</string>
+    <string name="update">تحديث</string>
+    <string name="latitude">خط الطول</string>
+    <string name="longitude">خط العرض</string>
+    <string name="add_place_select_current_location_text">أختر المكان الحالى</string>
+    <string name="btn_text_view_on_map">أعرض على الخريطة</string>
+    <string name="image_content_description">صورة</string>
+    <string name="btn_text_save">حفظ</string>
+    <string name="edit_text_hint_location">الموقع</string>
+    <string name="edit_text_hint_title">العنوان</string>
+    <string name="note_text_no_happy_places_found_yet_kindly_add_one">لايوجد أماكن. يمكنك أضافة البعض</string>
+    <string name="app_name">اﻷماكن السعيدة</string>
+    <string name="edit_happy_place">"تعديل "</string>
+    <string name="add_happy_place">أضافة مكان</string>
+</resources>

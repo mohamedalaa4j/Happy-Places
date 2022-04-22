@@ -82,6 +82,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// Display back button
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
+        supportActionBar?.setTitle(R.string.add_happy_place)
+
         binding?.toolbarAddPlace?.setNavigationOnClickListener {
             onBackPressed()
         }
@@ -97,7 +99,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// When model info passed throw intent populate the views automatically
         if (mHappyPlaceDetails != null) {
 
-            supportActionBar?.title = "Edit Happy Place"
+            supportActionBar?.setTitle(R.string.edit_happy_place)
 
             binding?.etTitle?.setText(mHappyPlaceDetails!!.title)
             binding?.etDescription?.setText(mHappyPlaceDetails!!.description)
@@ -110,7 +112,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
             binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
 
-            binding?.btnSave?.text = R.string.update.toString()
+            binding?.btnSave?.setText(R.string.update)
         }
         //endregion
 
@@ -139,7 +141,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// When model info passed throw intent to populate the views automatically
         if (mHappyPlaceDetails != null) {
 
-            supportActionBar?.title = "Edit Happy Place"
+            supportActionBar?.setTitle(R.string.edit_happy_place)
 
             binding?.etTitle?.setText(mHappyPlaceDetails!!.title)
             binding?.etDescription?.setText(mHappyPlaceDetails!!.description)
@@ -152,7 +154,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
             binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
 
-            binding?.btnSave?.text = R.string.update.toString()
+            binding?.btnSave?.setText(R.string.update)
         }
 
         //region setOnClickListener
