@@ -136,7 +136,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:hint="@string/latitude"
-                    android:inputType="text"
+                    android:inputType="numberDecimal"
                     android:textColor="@color/primary_text_color"
                     android:textColorHint="@color/secondary_text_color"
                     android:textSize="@dimen/edit_text_text_size" />
@@ -160,7 +160,7 @@
                     android:focusable="true"
                     android:focusableInTouchMode="true"
                     android:hint="@string/longitude"
-                    android:inputType="text"
+                    android:inputType="numberDecimal"
                     android:textColor="@color/primary_text_color"
                     android:textColorHint="@color/secondary_text_color"
                     android:textSize="@dimen/edit_text_text_size" />

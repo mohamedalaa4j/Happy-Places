@@ -176,6 +176,13 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 this@AddHappyPlaceActivity, resources.getString(R.string.google_maps_api_key)
             )
         }
+
+        if (binding?.etLatitude?.text?.isNotEmpty() == true){
+            if (mLatitude == 0.0 && mLongitude == 0.0){
+                mLatitude = binding?.etLatitude?.text.toString().toDouble()
+                mLongitude = binding?.etLongitude?.text.toString().toDouble()
+            }
+        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -223,8 +230,15 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             ///// Assigning the  Latitude & Longitude
             mLatitude = mLastLocation.latitude
             Log.e("Current Latitude", "$mLatitude")
+
+
             mLongitude = mLastLocation.longitude
             Log.e("Current Longitude", "$mLongitude")
+
+            binding?.etLongitude?.setText("$mLongitude")
+
+            var latitudeAndlongtudeForEtLocation = "$mLatitude, $mLongitude"
+            binding?.etLocation?.setText(latitudeAndlongtudeForEtLocation)
 
         }
     }
@@ -294,6 +308,14 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     else -> {
                         ///// Execute save to storage code
                         ///// HappyPlaceModel object with it's properties
+                        //region Set the mLatitude & mLatitude to the manual values
+                        if (binding?.etLatitude?.text?.isNotEmpty() == true){
+                            if (mLatitude == 0.0 && mLongitude == 0.0){
+                                mLatitude = binding?.etLatitude?.text.toString().toDouble()
+                                mLongitude = binding?.etLongitude?.text.toString().toDouble()
+                            }
+                        }
+                        //endregion
                         val happyPlaceModel = HappyPlaceModel(
                             if (mHappyPlaceDetails == null) 0 else mHappyPlaceDetails!!.id,
                             binding?.etTitle?.text.toString(),

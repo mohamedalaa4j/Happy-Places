@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/layout/activity_happy_place_detail.xml" value="0.2390625" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.25" />
         <entry key="app/src/main/res/layout/activity_map.xml" value="0.2078125" />
+        <entry key="app/src/main/res/layout/fragment_maps2.xml" value="0.2078125" />
         <entry key="app/src/main/res/layout/item_happy_place.xml" value="0.33" />
       </map>
     </option>
