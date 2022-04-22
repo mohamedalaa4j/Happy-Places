@@ -169,6 +169,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         binding?.etLocation?.setOnClickListener(this)
 
         binding?.tvSelectCurrentLocation?.setOnClickListener(this)
+
+        binding?.ivPlaceImage?.setOnClickListener(this)
         //endregion
 
         ///// Initialize the Fused location variable
@@ -212,6 +214,35 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             }
 
             R.id.tv_add_image -> {
+
+                //region Dialog preparation
+
+                ///// Dialog for multiple options
+                val pictureDialog = AlertDialog.Builder(this)
+                pictureDialog.setTitle("Select Action")
+
+                ///// Dialog options as an array of Strings
+                val pictureDialogItems = arrayOf("Select photo from gallery", "Capture photo from camera")
+
+                pictureDialog.setItems(pictureDialogItems) { _, which ->
+
+                    when (which) {
+
+                        ///// Option #1
+                        0 -> choosePhotoFromGallery()
+
+                        ///// Option #2
+                        1 -> takePhotoFromCamera()
+
+                    }
+                }
+                //endregion
+
+                ///// Show Dialog onClick
+                pictureDialog.show()
+            }
+
+            R.id.iv_place_image -> {
 
                 //region Dialog preparation
 
