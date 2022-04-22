@@ -63,7 +63,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     ///// A variable which will hold the longitude value
     private var mLongitude: Double = 0.0
 
-    ///// For storing new entries changing due to RV swipe to edit
+    ///// For storing new entries changing due to RV swipe to edit feature
     private var mHappyPlaceDetails: HappyPlaceModel? = null
 
     ///// A fused location client variable which is further user to get the user's current location
@@ -110,10 +110,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
             binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
 
-            binding?.btnSave?.text = "UPDATE"
+            binding?.btnSave?.text = R.string.update.toString()
         }
         //endregion
-
 
         //region DatePickerDialog
 
@@ -137,7 +136,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// Automatic set current date onCreate
         updateDateInView()
 
-        ///// When model info passed throw intent populate the views automatically
+        ///// When model info passed throw intent to populate the views automatically
         if (mHappyPlaceDetails != null) {
 
             supportActionBar?.title = "Edit Happy Place"
@@ -153,8 +152,10 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
 
             binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
 
-            binding?.btnSave?.text = "UPDATE"
+            binding?.btnSave?.text = R.string.update.toString()
         }
+
+        //region setOnClickListener
 
         ///// this point to AddHappyPlaceActivity as it implement OnClickListener functionality
         binding?.etDate?.setOnClickListener(this)
@@ -166,6 +167,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         binding?.etLocation?.setOnClickListener(this)
 
         binding?.tvSelectCurrentLocation?.setOnClickListener(this)
+        //endregion
 
         ///// Initialize the Fused location variable
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
@@ -177,15 +179,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             )
         }
 
-        if (binding?.etLatitude?.text?.isNotEmpty() == true){
-            if (mLatitude == 0.0 && mLongitude == 0.0){
-                mLatitude = binding?.etLatitude?.text.toString().toDouble()
-                mLongitude = binding?.etLongitude?.text.toString().toDouble()
-            }
-        }
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
     ///// For constants as static for all classes
     companion object {
         private const val GALLERY = 1
@@ -199,48 +194,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     override fun onDestroy() {
         super.onDestroy()
         binding = null
-    }
-
-    ///// Request the location
-    @SuppressLint("MissingPermission") // We asked for permission manually before calling the function
-    private fun requestNewLocationData() {
-
-        ///// LocationRequest object
-        val mLocationRequest = LocationRequest()
-        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-
-        ///// Properties
-        // How many every ms I want to run this
-        mLocationRequest.interval = 0
-        // update once
-        mLocationRequest.numUpdates = 1
-
-        ///// Assign settings to the Fused Location Client
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
-        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
-    }
-
-    ///// CallBack variable for requestLocationUpdates
-    private val mLocationCallback = object : LocationCallback() {
-
-        override fun onLocationResult(locationResult: LocationResult) {
-
-            val mLastLocation: Location = locationResult.lastLocation
-
-            ///// Assigning the  Latitude & Longitude
-            mLatitude = mLastLocation.latitude
-            Log.e("Current Latitude", "$mLatitude")
-
-
-            mLongitude = mLastLocation.longitude
-            Log.e("Current Longitude", "$mLongitude")
-
-            binding?.etLongitude?.setText("$mLongitude")
-
-            var latitudeAndlongtudeForEtLocation = "$mLatitude, $mLongitude"
-            binding?.etLocation?.setText(latitudeAndlongtudeForEtLocation)
-
-        }
     }
 
     override fun onClick(v: View) {
@@ -445,25 +398,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
-    ///// Check if we have the permissions to get the location
-    private fun isLocationEnabled(): Boolean {
-        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
-        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
-                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
-    }
-
-    ///// To put the selected date in the EditText function
-    private fun updateDateInView() {
-
-        ///// Format the date
-        val myFormat = "dd.MM.yyyy"
-        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
-
-        ///// Set the selected date in the EditText
-        binding?.etDate?.setText(sdf.format(cal.time).toString())
-    }
-
-    ///// onResult for Intent opening depending on the code
     public override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK) {
@@ -516,6 +450,68 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
     }
 
+    ///// Request the location
+    @SuppressLint("MissingPermission") // We asked for permission manually before calling the function
+    private fun requestNewLocationData() {
+
+        ///// LocationRequest object
+        val mLocationRequest = LocationRequest()
+        mLocationRequest.priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+
+        ///// Properties
+        // How many every ms I want to run this
+        mLocationRequest.interval = 0
+        // update once
+        mLocationRequest.numUpdates = 1
+
+        ///// Assign settings to the Fused Location Client
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this)
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, mLocationCallback, Looper.myLooper())
+    }
+
+    ///// CallBack variable for requestLocationUpdates
+    private val mLocationCallback = object : LocationCallback() {
+
+        override fun onLocationResult(locationResult: LocationResult) {
+
+            val mLastLocation: Location = locationResult.lastLocation
+
+            ///// Assigning the  Latitude & Longitude
+            mLatitude = mLastLocation.latitude
+            Log.e("Current Latitude", "$mLatitude")
+
+
+            mLongitude = mLastLocation.longitude
+            Log.e("Current Longitude", "$mLongitude")
+
+            binding?.etLongitude?.setText("$mLongitude")
+            binding?.etLatitude?.setText("$mLatitude")
+
+            val latitudeAndLongitudeForEtLocation = "$mLatitude, $mLongitude"
+            binding?.etLocation?.setText(latitudeAndLongitudeForEtLocation)
+
+        }
+    }
+
+    ///// Check if we have the permissions to get the location
+    private fun isLocationEnabled(): Boolean {
+        val locationManager: LocationManager = getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER) ||
+                locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
+    }
+
+    ///// To put the selected date in the EditText function
+    private fun updateDateInView() {
+
+        ///// Format the date
+        val myFormat = "dd.MM.yyyy"
+        val sdf = SimpleDateFormat(myFormat, Locale.getDefault())
+
+        ///// Set the selected date in the EditText
+        binding?.etDate?.setText(sdf.format(cal.time).toString())
+    }
+
+    ///// onResult for Intent opening depending on the code
     private fun takePhotoFromCamera() {
         ///// Ask for the permissions
         Dexter.withActivity(this).withPermissions(
@@ -652,6 +648,5 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         ///// Return the saved image in the Uri format
         return Uri.parse(file.absolutePath)
     }
-
 
 }

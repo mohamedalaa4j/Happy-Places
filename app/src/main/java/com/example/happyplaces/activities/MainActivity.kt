@@ -35,6 +35,27 @@ class MainActivity : AppCompatActivity() {
     }
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+    companion object {
+        private const val ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
+        internal const val EXTRA_PLACE_DETAILS = "extra_place_details"
+    }
+
+    // Call Back method  to get the Message form other Activity
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+
+        // check if the request code is same as what is passed  here it is 'ADD_PLACE_ACTIVITY_REQUEST_CODE'
+        if (requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == Activity.RESULT_OK) {
+
+                ///// Refresh the RV here
+                getHappyPlacesListFromLocalDB()
+            } else {
+                Log.e("Activity", "Cancelled or Back Pressed")
+            }
+        }
+    }
+
     private fun setupHappyPlacesRecyclerView(happyPlacesList: ArrayList<HappyPlaceModel>) {
 
         binding?.rvHappyPlacesList?.layoutManager = LinearLayoutManager(this)
@@ -78,6 +99,7 @@ class MainActivity : AppCompatActivity() {
         ///// Attach ItemTouchHelper to the RV
         editItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
         //endregion
+
         //region Swipe To Delete
 
         ///// Object of SwipeToEditCallback
@@ -127,24 +149,5 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Call Back method  to get the Message form other Activity
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
 
-        // check if the request code is same as what is passed  here it is 'ADD_PLACE_ACTIVITY_REQUEST_CODE'
-        if (requestCode == ADD_PLACE_ACTIVITY_REQUEST_CODE) {
-            if (resultCode == Activity.RESULT_OK) {
-
-                ///// Refresh the RV here
-                getHappyPlacesListFromLocalDB()
-            } else {
-                Log.e("Activity", "Cancelled or Back Pressed")
-            }
-        }
-    }
-
-    companion object {
-        private const val ADD_PLACE_ACTIVITY_REQUEST_CODE = 1
-        internal const val EXTRA_PLACE_DETAILS = "extra_place_details"
-    }
 }
